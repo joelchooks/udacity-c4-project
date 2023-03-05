@@ -1,27 +1,40 @@
+
 import 'source-map-support/register'
-import {APIGatewayProxyEvent, APIGatewayProxyHandler, APIGatewayProxyResult} from 'aws-lambda'
-import {UpdateTodoRequest} from '../../requests/UpdateTodoRequest'
-import {updateToDo} from "../../businessLogic/ToDo";
+import { updateTodo } from '../../helpers/todos'
+import { UpdateTodoRequest } from '../../requests/UpdateTodoRequest'
+import { APIGatewayProxyEvent, APIGatewayProxyHandler, APIGatewayProxyResult } from 'aws-lambda'
 
-export const handler: APIGatewayProxyHandler = async (event: APIGatewayProxyEvent): Promise<APIGatewayProxyResult> => {
-    // TODO: Update a TODO item with the provided id using values in the "updatedTodo" object
-    console.log("Processing Event ", event);
-    const authorization = event.headers.Authorization;
-    const split = authorization.split(' ');
-    const jwtToken = split[1];
+export const updateToDoHandler: APIGatewayProxyHandler = async (event: APIGatewayProxyEvent): Promise<APIGatewayProxyResult> => {
+    try {
 
-    const todoId = event.pathParameters.todoId;
-    const updatedTodo: UpdateTodoRequest = JSON.parse(event.body);
+        const auth = event.headers.Authorization
+        const jwt = auth.split(' ')[1]
 
-    const toDoItem = await updateToDo(updatedTodo, todoId, jwtToken);
+        const todoId = event.pathParameters.todoId
+        const updatedTodoReq: UpdateTodoRequest = JSON.parse(event.body)
 
-    return {
-        statusCode: 200,
-        headers: {
-            "Access-Control-Allow-Origin": "*",
-        },
-        body: JSON.stringify({
-            "item": toDoItem
-        }),
+        const toDoItem = await updateTodo(updatedTodoReq, todoId, jwt)
+
+        return {
+            statusCode: 200,
+            headers: {
+                'Access-Control-Allow-Origin': '*',
+            },
+            body: JSON.stringify({
+                item: toDoItem,
+            }),
+        }
+    } catch (error) {
+        console.error(`Error updating TODO item: ${error.message}`)
+
+        return {
+            statusCode: error.statusCode || 500,
+            headers: {
+                'Access-Control-Allow-Origin': '*',
+            },
+            body: JSON.stringify({
+                error: error.message,
+            }),
+        }
     }
-};
+}
