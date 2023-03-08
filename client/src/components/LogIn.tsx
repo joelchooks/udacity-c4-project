@@ -1,6 +1,6 @@
 import * as React from 'react'
 import Auth from '../auth/Auth'
-import { Button } from 'semantic-ui-react'
+import {Button} from 'semantic-ui-react'
 
 interface LogInProps {
   auth: Auth
