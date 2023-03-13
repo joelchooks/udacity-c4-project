@@ -1,6 +1,6 @@
 
 import 'source-map-support/register'
-import { updateTodo } from '../../helpers/todos'
+import { updateTodo } from '../../helpers/businessLogic/todos'
 import { UpdateTodoRequest } from '../../requests/UpdateTodoRequest'
 import { APIGatewayProxyEvent, APIGatewayProxyHandler, APIGatewayProxyResult } from 'aws-lambda'
 
@@ -12,6 +12,10 @@ export const updateToDoHandler: APIGatewayProxyHandler = async (event: APIGatewa
 
         const todoId = event.pathParameters.todoId
         const updatedTodoReq: UpdateTodoRequest = JSON.parse(event.body)
+
+        if (!updatedTodoReq.name) {
+          throw new Error('Empty description is not allowed.')
+        }
 
         const toDoItem = await updateTodo(updatedTodoReq, todoId, jwt)
 

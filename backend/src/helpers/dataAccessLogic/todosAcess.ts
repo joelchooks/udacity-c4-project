@@ -1,12 +1,15 @@
 
-import { TodoUpdate } from "../models/TodoUpdate";
+import { TodoUpdate } from "../../models/TodoUpdate";
 import { Types } from 'aws-sdk/clients/s3';
 import { DocumentClient } from "aws-sdk/clients/dynamodb";
-import { TodoItem } from "../models/TodoItem";
+import { TodoItem } from "../../models/TodoItem";
 import * as AWS from "aws-sdk";
-
+import * as AWSXRay from 'aws-xray-sdk'
 
 // TODO: Implement the dataLayer logic
+
+const XAWS = AWSXRay.captureAWS(AWS)
+
 
 export class ToDoAccess {
     private readonly documentClient: DocumentClient;
@@ -16,7 +19,7 @@ export class ToDoAccess {
 
     constructor() {
         this.documentClient = new AWS.DynamoDB.DocumentClient();
-        this.mys3Client = new AWS.S3({ signatureVersion: 'v4' });
+        this.mys3Client = new XAWS.S3({ signatureVersion: 'v4' });
         this.toDoTable = process.env.TODOS_TABLE;
         this.s3BuckName = process.env.S3_BUCKET_NAME;
     }

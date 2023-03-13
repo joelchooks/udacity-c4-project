@@ -1,5 +1,5 @@
 import 'source-map-support/register'
-import { getAllTodos } from '../../helpers/todos'
+import { getAllTodos } from '../../helpers/businessLogic/todos'
 import { APIGatewayProxyEvent, APIGatewayProxyHandler, APIGatewayProxyResult } from 'aws-lambda'
 
 export const getAllToDosHandler: APIGatewayProxyHandler = async (event: APIGatewayProxyEvent): Promise<APIGatewayProxyResult> => {
@@ -7,7 +7,6 @@ export const getAllToDosHandler: APIGatewayProxyHandler = async (event: APIGatew
 
         const auth = event.headers.Authorization
         const jwt = auth.split(' ')[1]
-
         const toDos = await getAllTodos(jwt)
 
         return {

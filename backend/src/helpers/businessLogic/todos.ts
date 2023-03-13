@@ -1,10 +1,10 @@
 
-import { TodoItem } from "../models/TodoItem";
-import { UpdateTodoRequest } from "../requests/UpdateTodoRequest";
-import { TodoUpdate } from "../models/TodoUpdate";
-import { ToDoAccess } from "./todosAcess";
-import { CreateTodoRequest } from "../requests/CreateTodoRequest";
-import { parseUserId } from "../auth/utils";
+import { TodoItem } from "../../models/TodoItem";
+import { UpdateTodoRequest } from "../../requests/UpdateTodoRequest";
+import { TodoUpdate } from "../../models/TodoUpdate";
+import { ToDoAccess } from "../dataAccessLogic/todosAcess";
+import { CreateTodoRequest } from "../../requests/CreateTodoRequest";
+import { parseUserId } from "../../auth/utils";
 
 
 
