@@ -1,5 +1,5 @@
 import 'source-map-support/register'
-import {generateUploadUrl} from "../../helpers/todos";
+import {generateUploadUrl} from "../../helpers/businessLogic/todos";
 
 import {APIGatewayProxyEvent, APIGatewayProxyResult, APIGatewayProxyHandler} from 'aws-lambda'
 

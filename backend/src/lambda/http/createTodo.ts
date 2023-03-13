@@ -1,5 +1,5 @@
 import 'source-map-support/register'
-import { createTodo } from '../../helpers/todos'
+import { createTodo } from '../../helpers/businessLogic/todos'
 import { CreateTodoRequest } from '../../requests/CreateTodoRequest'
 import { APIGatewayProxyEvent, APIGatewayProxyHandler, APIGatewayProxyResult } from 'aws-lambda'
 
@@ -11,6 +11,20 @@ export const createTodoHandler: APIGatewayProxyHandler = async (event: APIGatewa
         const jwt = auth.split(' ')[1]
 
         const todoRequest: CreateTodoRequest = JSON.parse(event.body)
+
+        // Check if the todo description is not empty
+        if (!todoRequest.name) {
+            return {
+                statusCode: 400,
+                headers: {
+                    'Access-Control-Allow-Origin': '*',
+                },
+                body: JSON.stringify({
+                    error: 'Todo description cannot be empty',
+                }),
+            }
+        }
+        
         const createdTodoItem = await createTodo(todoRequest, jwt)
 
         return {

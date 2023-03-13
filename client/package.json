@@ -4,6 +4,7 @@
   "private": true,
   "dependencies": {
     "@babel/core": "^7.0.0",
+    "aws-xray-sdk": "^3.4.1",
     "axios": "^0.18.1",
     "babel-loader": "8.1.0",
     "dateformat": "^3.0.3",
