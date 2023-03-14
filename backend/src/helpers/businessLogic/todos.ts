@@ -5,11 +5,15 @@ import { TodoUpdate } from "../../models/TodoUpdate";
 import { ToDoAccess } from "../dataAccessLogic/todosAcess";
 import { CreateTodoRequest } from "../../requests/CreateTodoRequest";
 import { parseUserId } from "../../auth/utils";
+import * as AWS from "aws-sdk";
+import * as AWSXRay from 'aws-xray-sdk'
 
-
+const XAWS = AWSXRay.captureAWS(AWS)
 
 const toDoAccess = new ToDoAccess();
 const uuidv4 = require('uuid/v4');
+
+
 
 /**
  * Retrieve all to-do items for the authenticated user.
@@ -19,7 +23,9 @@ const uuidv4 = require('uuid/v4');
  */
 export async function getAllTodos(jwtToken: string): Promise<TodoItem[]> {
   const userId = parseUserId(jwtToken);
-  return toDoAccess.getAllToDos(userId);
+  return XAWS.captureAsyncFunc('getAllTodos', async () => {
+    return toDoAccess.getAllToDos(userId);
+  });
 }
 
 /**
@@ -43,7 +49,9 @@ export function createTodo(createTodoRequest: CreateTodoRequest, jwtToken: strin
     ...createTodoRequest,
   };
 
-  return toDoAccess.createTodoItem(newTodo);
+  return XAWS.captureAsyncFunc('createTodo', async () => {
+    return toDoAccess.createTodoItem(newTodo);
+  });
 }
 
 /**
@@ -56,7 +64,9 @@ export function createTodo(createTodoRequest: CreateTodoRequest, jwtToken: strin
  */
 export function updateTodo(updateTodoRequest: UpdateTodoRequest, todoId: string, jwtToken: string): Promise<TodoUpdate> {
   const userId = parseUserId(jwtToken);
-  return toDoAccess.updateTodoItem(updateTodoRequest, todoId, userId);
+  return XAWS.captureAsyncFunc('updateTodo', async () => {
+    return toDoAccess.updateTodoItem(updateTodoRequest, todoId, userId);
+  });
 }
 
 /**
@@ -68,7 +78,9 @@ export function updateTodo(updateTodoRequest: UpdateTodoRequest, todoId: string,
  */
 export function deleteTodo(todoId: string, jwtToken: string): Promise<string> {
   const userId = parseUserId(jwtToken);
-  return toDoAccess.deleteTodoItem(todoId, userId);
+  return XAWS.captureAsyncFunc('deleteTodo', async () => {
+    return toDoAccess.deleteTodoItem(todoId, userId);
+  });
 }
 
 /**
@@ -78,5 +90,7 @@ export function deleteTodo(todoId: string, jwtToken: string): Promise<string> {
  * @returns a promise containing the pre-signed URL
  */
 export function generateUploadUrl(todoId: string): Promise<string> {
-  return toDoAccess.generateUploadUrl(todoId);
+  return XAWS.captureAsyncFunc('generateUploadUrl', async () => {
+    return toDoAccess.generateUploadUrl(todoId);
+  });
 }

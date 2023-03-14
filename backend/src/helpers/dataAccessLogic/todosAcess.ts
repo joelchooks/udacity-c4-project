@@ -3,10 +3,13 @@ import { TodoUpdate } from "../../models/TodoUpdate";
 import { Types } from 'aws-sdk/clients/s3';
 import { DocumentClient } from "aws-sdk/clients/dynamodb";
 import { TodoItem } from "../../models/TodoItem";
+import { createLogger } from '../../utils/logger';
 import * as AWS from "aws-sdk";
 import * as AWSXRay from 'aws-xray-sdk'
 
 // TODO: Implement the dataLayer logic
+
+const logger = createLogger('TodosAccess');
 
 const XAWS = AWSXRay.captureAWS(AWS)
 
@@ -28,6 +31,7 @@ export class ToDoAccess {
     // Return an array of all TodoItems related to the specified userId.
 
     async getAllToDos(userId: string): Promise<TodoItem[]> {
+        logger.info('Fetching todos');
 
         const params = {
             TableName: this.toDoTable,
@@ -49,6 +53,7 @@ export class ToDoAccess {
     // Creates a new TodoItem in the DynamoDB table.
 
     async createTodoItem(todoItem: TodoItem): Promise<TodoItem> {
+        logger.info('Creating todo');
 
         const params = {
             TableName: this.toDoTable,
@@ -65,6 +70,8 @@ export class ToDoAccess {
     // Updates an existing Todo Item in the DynamoDB table.
 
     async updateTodoItem(todoUpdate: TodoUpdate, todoId: string, userId: string): Promise<TodoUpdate> {
+
+        logger.info('Updating a todo');
 
         const params = {
             TableName: this.toDoTable,
@@ -92,7 +99,8 @@ export class ToDoAccess {
 
     // Deletes a TodoItem from the DynamoDB table.
     async deleteTodoItem(todoId: string, userId: string): Promise<string> {
-        console.log("Deleting todo");
+        
+        logger.info("Deleting a todo");
 
         const params = {
             TableName: this.toDoTable,
@@ -114,6 +122,9 @@ export class ToDoAccess {
     // Generates a signed URL that can be used to upload a file to the
 
     async generateUploadUrl(todoId: string): Promise<string> {
+
+        logger.info('Getting an upload url');
+
 
         const uri = this.mys3Client.getSignedUrl('putObject', {
             Bucket: this.s3BuckName,
